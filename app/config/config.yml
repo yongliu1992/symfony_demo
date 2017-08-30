@@ -70,10 +70,10 @@ twig:
 doctrine:
     dbal:
         driver:   pdo_mysql
-        host:     "%database_host%"
-        dbname:   "%database_name%"
-        user:     "%database_user%"
-        password: "%database_password%"
+        host:     "localhost"
+        dbname:   "test"
+        user:     "root"
+        password: ""
 
 
         # if you don't want to use SQLite, change the URL in parameters.yml or set the DATABASE_URL environment variable
