@@ -17,6 +17,7 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Templating\PhpEngine;
 use Symfony\Component\Templating\TemplateNameParser;
 use Symfony\Component\Templating\Loader\FilesystemLoader;
+use Symfony\Component\Cache\Simple\FilesystemCache;
 
 class TaskController extends Controller
 {
@@ -60,13 +61,49 @@ class TaskController extends Controller
     var_dump($crawler);
  }
 
+    /**
+     * @Route("Task/ttt")
+     */
+
     function tttAction()
     {
         $loader = new FilesystemLoader(__DIR__ . '/views/%name%');
 
         $templating = new PhpEngine(new TemplateNameParser(), $loader);
 
-        echo $templating->render('hello.php', array('firstname' => 'Fabien'));
+        echo $templating->render('hello.html.twig', array('firstname' => 'Fabien'));
+
+
+    }
+
+    /**
+     * @Route("Task/cache")
+     */
+    function cacheAction()
+    {
+   $cache = new Cache();
+        // save a new item in the cache
+        $cache->set('stats.num_products', 4711);
+
+// or set it with a custom ttl
+// $cache->set('stats.num_products', 4711, 3600);
+
+// retrieve the cache item
+        if (!$cache->has('stats.num_products')) {
+            // ... item does not exists in the cache
+        }
+
+// retrieve the value stored by the item
+        $numProducts = $cache->get('stats.num_products');
+
+// or specify a default value, if the key doesn't exist
+// $numProducts = $cache->get('stats.num_products', 100);
+
+// remove the cache key
+        $cache->delete('stats.num_products');
+
+// clear *all* cache keys
+        $cache->clear();
 
 
     }
