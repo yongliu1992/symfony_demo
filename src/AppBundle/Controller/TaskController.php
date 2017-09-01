@@ -107,4 +107,14 @@ class TaskController extends Controller
 
 
     }
+
+    /**
+     * @Route("Task/welcome")
+     */
+
+    function welcomeAction(){
+        return $this->render('task/welcome.html.twig', ['page_title'=>'hello.world']
+        );
+
+    }
 }

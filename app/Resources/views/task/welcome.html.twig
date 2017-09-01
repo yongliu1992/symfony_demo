@@ -1,0 +1,16 @@
+{# app/Resources/views/base.html.twig #}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Welcome to Symfony!</title>
+</head>
+<body>
+<h1>{{ page_title }}</h1>
+
+<ul id="navigation">
+    {% for i in 0..10 %}
+        * {{ i }}
+    {% endfor %}
+</ul>
+</body>
+</html>
