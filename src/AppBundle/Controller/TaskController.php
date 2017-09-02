@@ -113,8 +113,9 @@ class TaskController extends Controller
      */
 
     function welcomeAction(){
-        return $this->render('task/welcome.html.twig', ['page_title'=>'hello.world']
-        );
+        $arr['beauty'] = 'da mei nv';
+        $loop = ['a'=>'alpha','b'=>'branch'];
+        return $this->render('task/welcome.html.twig', ['page_title'=>'hello.world','arr'=>$arr,'loop'=>$loop]);
 
     }
 }

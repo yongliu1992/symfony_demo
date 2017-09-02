@@ -71,7 +71,7 @@ doctrine:
     dbal:
         driver:   pdo_mysql
         host:     "localhost"
-        dbname:   "test"
+        dbname:   "test_symfony"
         user:     "root"
         password: ""
 

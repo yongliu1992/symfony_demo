@@ -12,5 +12,21 @@
         * {{ i }}
     {% endfor %}
 </ul>
+{{  arr.beauty }}
+
+{% for value in loop %}
+{{ value }}<br/>
+{% endfor %}
+
+{% for key in loop|keys %}
+
+{{ key }}<br/>
+
+{% endfor %}
+
+
+{% for key, value in foo %}
+    {{ key}}:{{value }}
+{% endfor %}
 </body>
 </html>
