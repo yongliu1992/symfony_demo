@@ -1,94 +1,63 @@
 <?php
 
-/*
- * This file is part of the Symfony package.
- *
- * (c) Fabien Potencier <fabien@symfony.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
- * @ORM\Entity(repositoryClass="AppBundle\Repository\UserRepository")
- * @ORM\Table(name="symfony_demo_user")
- *
- * Defines the properties of the User entity to represent the application users.
- * See https://symfony.com/doc/current/book/doctrine.html#creating-an-entity-class
- *
- * Tip: if you have an existing database, you can generate these entity class automatically.
- * See https://symfony.com/doc/current/cookbook/doctrine/reverse_engineering.html
- *
- * @author Ryan Weaver <weaverryan@gmail.com>
- * @author Javier Eguiluz <javier.eguiluz@gmail.com>
+ * @ORM\Entity
+ * @UniqueEntity(fields="email", message="Email already taken")
+ * @UniqueEntity(fields="username", message="Username already taken")
  */
-class User implements UserInterface, \Serializable
+class User implements UserInterface
 {
     /**
-     * @var int
-     *
      * @ORM\Id
-     * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(type="string")
-     */
-    private $fullName;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(type="string", unique=true)
-     */
-    private $username;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(type="string", unique=true)
+     * @ORM\Column(type="string", length=255, unique=true)
+     * @Assert\NotBlank()
+     * @Assert\Email()
      */
     private $email;
 
     /**
-     * @var string
+     * @ORM\Column(type="string", length=255, unique=true)
+     * @Assert\NotBlank()
+     */
+    private $username;
+
+    /**
+     * @Assert\NotBlank()
+     * @Assert\Length(max=4096)
+     */
+    private $plainPassword;
+
+    /**
+     * The below length depends on the "algorithm" you use for encoding
+     * the password, but this works well with bcrypt.
      *
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="string", length=64)
      */
     private $password;
 
-    /**
-     * @var array
-     *
-     * @ORM\Column(type="json_array")
-     */
-    private $roles = [];
+    // other properties and methods
 
-    public function getId()
+    public function getEmail()
     {
-        return $this->id;
+        return $this->email;
     }
 
-    /**
-     * @param string $fullName
-     */
-    public function setFullName($fullName)
+    public function setEmail($email)
     {
-        $this->fullName = $fullName;
-    }
-
-    public function getFullName()
-    {
-        return $this->fullName;
+        $this->email = $email;
     }
 
     public function getUsername()
@@ -96,25 +65,19 @@ class User implements UserInterface, \Serializable
         return $this->username;
     }
 
-    /**
-     * @param string $username
-     */
     public function setUsername($username)
     {
         $this->username = $username;
     }
 
-    public function getEmail()
+    public function getPlainPassword()
     {
-        return $this->email;
+        return $this->plainPassword;
     }
 
-    /**
-     * @param string $email
-     */
-    public function setEmail($email)
+    public function setPlainPassword($password)
     {
-        $this->email = $email;
+        $this->plainPassword = $password;
     }
 
     public function getPassword()
@@ -122,78 +85,24 @@ class User implements UserInterface, \Serializable
         return $this->password;
     }
 
-    /**
-     * @param string $password
-     */
     public function setPassword($password)
     {
         $this->password = $password;
     }
 
-    /**
-     * Returns the roles or permissions granted to the user for security.
-     */
-    public function getRoles()
-    {
-        $roles = $this->roles;
-
-        // guarantees that a user always has at least one role for security
-        if (empty($roles)) {
-            $roles[] = 'ROLE_USER';
-        }
-
-        return array_unique($roles);
-    }
-
-    public function setRoles(array $roles)
-    {
-        $this->roles = $roles;
-    }
-
-    /**
-     * Returns the salt that was originally used to encode the password.
-     *
-     * {@inheritdoc}
-     */
     public function getSalt()
     {
-        // See "Do you need to use a Salt?" at https://symfony.com/doc/current/cookbook/security/entity_provider.html
-        // we're using bcrypt in security.yml to encode the password, so
-        // the salt value is built-in and you don't have to generate one
+        // The bcrypt algorithm doesn't require a separate salt.
+        // You *may* need a real salt if you choose a different encoder.
+        return null;
     }
 
-    /**
-     * Removes sensitive data from the user.
-     *
-     * {@inheritdoc}
-     */
-    public function eraseCredentials()
-    {
-        // if you had a plainPassword property, you'd nullify it here
-        // $this->plainPassword = null;
+    // other methods, including security methods like getRoles()
+    public function eraseCredentials(){
+
     }
 
-    /** @see \Serializable::serialize() */
-    public function serialize()
-    {
-        return serialize([
-            $this->id,
-            $this->username,
-            $this->password,
-            // see section on salt below
-            // $this->salt,
-        ]);
-    }
+    public function getRoles(){
 
-    /** @see \Serializable::unserialize() */
-    public function unserialize($serialized)
-    {
-        list(
-            $this->id,
-            $this->username,
-            $this->password,
-            // see section on salt below
-            // $this->salt
-        ) = unserialize($serialized);
     }
 }
