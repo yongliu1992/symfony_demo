@@ -53,10 +53,10 @@ class BlogController extends Controller
      * @Route("/", name="admin_post_index")
      * @Method("GET")
      */
-    public function indexAction()
+    public  function  indexAction()
     {
-        $em = $this->getDoctrine()->getManager();
-        $posts = $em->getRepository(Post::class)->findBy(['author' => $this->getUser()], ['publishedAt' => 'DESC']);
+        $em  = $this->getDoctrine()->getManager();
+        $post = $em->getRepository(Post::class)->findBy(['author'=>$this->getUser()],['publishedAt'=>'DESC']);
 
         return $this->render('admin/blog/index.html.twig', ['posts' => $posts]);
     }
@@ -72,6 +72,47 @@ class BlogController extends Controller
      * it responds to all methods).
      */
     public function newAction(Request $request, Slugger $slugger)
+    {
+        $post = new Post();
+        $post->setAuthor($this->getUser());
+
+        // See https://symfony.com/doc/current/book/forms.html#submitting-forms-with-multiple-buttons
+        $form = $this->createForm(PostType::class, $post)
+            ->add('saveAndCreateNew', SubmitType::class);
+
+        $form->handleRequest($request);
+
+        // the isSubmitted() method is completely optional because the other
+        // isValid() method already checks whether the form is submitted.
+        // However, we explicitly add it to improve code readability.
+        // See https://symfony.com/doc/current/best_practices/forms.html#handling-form-submits
+        if ($form->isSubmitted() && $form->isValid()) {
+            $post->setSlug($slugger->slugify($post->getTitle()));
+
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($post);
+            $em->flush();
+
+            // Flash messages are used to notify the user about the result of the
+            // actions. They are deleted automatically from the session as soon
+            // as they are accessed.
+            // See https://symfony.com/doc/current/book/controller.html#flash-messages
+            $this->addFlash('success', 'post.created_successfully');
+
+            if ($form->get('saveAndCreateNew')->isClicked()) {
+                return $this->redirectToRoute('admin_post_new');
+            }
+
+            return $this->redirectToRoute('admin_post_index');
+        }
+
+        return $this->render('admin/blog/new.html.twig', [
+            'post' => $post,
+            'form' => $form->createView(),
+        ]);
+    }
+
+    public function newAction2(Request $request, Slugger $slugger)
     {
         $post = new Post();
         $post->setAuthor($this->getUser());
