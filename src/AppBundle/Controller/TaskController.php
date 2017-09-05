@@ -10,6 +10,7 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\Task;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\BrowserKit\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
@@ -118,4 +119,33 @@ class TaskController extends Controller
         return $this->render('task/welcome.html.twig', ['page_title'=>'hello.world','arr'=>$arr,'loop'=>$loop]);
 
     }
+
+    /**
+     * 抛出404找不到 异常
+     * @Route("Task/nofind")
+     */
+    function nofindAction()
+    {
+        $product='';
+        if(!$product)
+        {
+            throw $this->createNotFoundException('The product not found111');
+
+        }
+
+
+    }
+
+    /**
+     *
+     * @Route("Task/getQuestion")
+     */
+    function getQuestionAction(Request $request)
+    {
+
+      //  return new Response(var_dump($request));
+        return $this->json(array('username' => 'jane.doe'));
+    }
+
+
 }
